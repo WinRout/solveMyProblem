@@ -23,7 +23,7 @@ const main = async () => {
         topics: [
             "user-get-response"
         ],
-        fromBeginning: false
+        fromBeginning: true
     });
     
     // kafka messages handling
@@ -64,7 +64,7 @@ const main = async () => {
         - When received user from kafka topic, I can continue
         */
         while (users[email] === undefined) {
-            await new Promise(resolve => setTimeout(resolve, 100));
+            await new Promise(resolve => setTimeout(resolve, 500));
         }
 
         // If user is null, it means that he is not in the User database
