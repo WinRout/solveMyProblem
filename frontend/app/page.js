@@ -1,10 +1,9 @@
 import Image from "next/image";
-import styles from "./page.module.css";
 
 export default function Home() {
   return (
-    <main className={styles.main}>
-      <h1>solveMyProblem</h1>
+    <main className="w-full flex-center flex-col">
+      <h1 className="head_text text-center">solveMyProblem</h1>
     </main>
   );
 }
