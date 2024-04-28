@@ -1,0 +1,16 @@
+{
+  "name": "service-user-data",
+  "version": "1.0.0",
+  "description": "## (name)",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "kafkajs": "^2.2.4",
+    "mongoose": "^8.3.2"
+  }
+}
