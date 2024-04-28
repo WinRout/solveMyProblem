@@ -1,0 +1,15 @@
+{
+  "name": "service-user-data-adapter",
+  "version": "1.0.0",
+  "description": "## (name)",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.19.2",
+    "kafkajs": "^2.2.4"
+  }
+}
