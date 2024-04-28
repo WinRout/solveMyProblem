@@ -1,6 +1,10 @@
 # NTUA ECE SAAS 2024 PROJECT
   
-## TEAM (15)
+## solveMyProblem - TEAM 15
+
+<p align="center">
+  <img src="frontend/public/assets/images/logo.svg" width="25%"/>
+</p>
 
 ### instructions
 
