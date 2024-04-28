@@ -2,16 +2,6 @@ import Link from "next/link";
 
 const Form = ({ post, setPost, submitting, handleSubmit }) => {
   return (
-    <section className='w-full max-w-full flex-start flex-col'>
-      <h1 className='head_text text-left'>
-        <span className='blue_gradient'>Add Credits</span>
-      </h1>
-      <p className='desc text-left max-w-md'>
-        Add more credits to your account wallet. 
-        <br/><br/>
-        Credits enable you to gather more computational power and thus solve more intensive problems. 
-      </p>
-
       <form
         onSubmit={handleSubmit}
         className='mt-10 w-1/2 flex flex-col gap-7 glassmorphism'
@@ -45,7 +35,6 @@ const Form = ({ post, setPost, submitting, handleSubmit }) => {
           </button>
         </div>
       </form>
-    </section>
   );
 };
 
