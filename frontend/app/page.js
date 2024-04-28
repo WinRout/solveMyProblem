@@ -9,7 +9,7 @@ export default function Home() {
       </h1>
       <p className='desc text-center'>
       solveMyProblem utilizes a software suite, 
-      tuned for tackling the world's toughest problems. We give you the copmutational power
+      tuned for tackling the world's toughest problems. We give you the computational power
       and the algorithms. You only give the input data.
     </p>
     </section>

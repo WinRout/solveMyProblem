@@ -3,12 +3,15 @@
 import { useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { useUser } from "@/contexts/UserContext";
 
 import Form from "@/components/Form";
+import { SERVER_PROPS_GET_INIT_PROPS_CONFLICT } from "next/dist/lib/constants";
 
-const CreatePrompt = () => {
+const page = () => {
   const router = useRouter();
   const { data: session } = useSession();
+  const { user, fetchUserData } = useUser();
 
   const [submitting, setIsSubmitting] = useState(false);
   const [post, setPost] = useState({ prompt: "", tag: "" });
@@ -28,7 +31,7 @@ const CreatePrompt = () => {
       });
 
       if (response.ok) {
-          window.location.reload()
+          window.location.reload();
       }
     } catch (error) {
       console.log(error);
@@ -53,6 +56,7 @@ const CreatePrompt = () => {
       />
     </section>
   );
+
 };
 
-export default CreatePrompt;
+export default page;

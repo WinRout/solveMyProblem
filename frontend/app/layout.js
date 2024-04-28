@@ -1,7 +1,10 @@
+
 import '@/styles/globals.css';
 
 import Providers from "../components/Providers";
 import AppBar from "../components/AppBar";
+
+import { UserProvider } from '../contexts/UserContext';
 
 export const metadata = {
   title: "solveMyProblem"
@@ -12,12 +15,14 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body>
         <Providers>
-          <div className="main">
-          </div>
-          <main className='app'>
-          <AppBar />
-          {children}
-          </main>
+          <UserProvider>
+            <div className="main">
+            </div>
+            <main className='app'>
+            <AppBar/>
+            {children}
+            </main>
+          </UserProvider>
         </Providers>
       </body>
     </html>
