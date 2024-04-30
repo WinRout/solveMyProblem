@@ -71,7 +71,7 @@ const main = async () => {
         res.send(users[email] === null ? {} : users[email]);
 
         // Forget user, so next time will be surely updated before res.send
-        users[email] = undefined;
+        // users[email] = undefined;
     });
 
     app.post('/user-create', (req, res) => {
@@ -98,8 +98,8 @@ const main = async () => {
                 }
             ]
         });
-
-        res.sendStatus(200);
+      
+        res.sendStatus(200);     
     });
 
     app.listen(4010, () => {
