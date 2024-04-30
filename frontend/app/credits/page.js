@@ -31,6 +31,7 @@ const page = () => {
       });
 
       if (response.ok) {
+          alert(`${post.credits} credits added succesfully to your account!`)
           window.location.reload();
       }
     } catch (error) {
