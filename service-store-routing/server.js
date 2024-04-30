@@ -65,6 +65,16 @@ const main = async () => {
                         output_data: data.output_data,
                     }
                 );
+
+                // Update the user credits by notifying the user-data-service
+                const spent_credits = -1 * Math.abs(data.execution_secs);
+                
+                producer.send({
+                    topic: "user-credits-update-request",
+                    messages: [ 
+                        { key: data.email, value: spent_credits.toString()}
+                    ]
+                });
             }
 
             else if (topic == "execution-routing-request") {
