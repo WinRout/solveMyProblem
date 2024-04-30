@@ -10,6 +10,8 @@ const kafka = new Kafka({
 const producer = kafka.producer();
 const consumer = kafka.consumer({ groupId: "service-store-routing" });
 
+// Boolean value to save the running state of the solver
+let isRunning = false;
 
 const main = async () => {
 
@@ -18,13 +20,13 @@ const main = async () => {
     const SubmissionSchema = new mongoose.Schema({
         submission_name: String,
         email: String,
-        input_data: String,
+        input_data: Object,
         max_secs: Number,
         creation_date: Date,
         update_date: Date,
         execution_date: Date,
         execution_secs: Number,
-        output_data: String
+        output_data: Object
     })
 
     const Submission = mongoose.model("Submission", SubmissionSchema)
@@ -40,7 +42,9 @@ const main = async () => {
             // The below topics are TO DO
             "get-user-submissions-request", // for the User's Submissions' list screen
             "get-all-submissions-request", // for the Admin's Submissions' list screen
-            "results-submissions-routing-notification" // for updating results after execution
+            // The above topics are TO DO 
+            "execution-routing-request", // for when requested to execute a submission from adapter
+            "solver-routing-response" // for updating results after execution
         ],
         fromBeginning: false
     })
@@ -48,8 +52,50 @@ const main = async () => {
     await consumer.run({
         eachMessage: async ({ message, topic }) => {
 
-            if (topic === "create-submission-routing-request") {    
+            if (topic == "solver-routing-response") {
                 const data = JSON.parse(message.value.toString());
+                // set running state of solver to false
+                isRunning = false;
+                
+                await Submission.findOneAndUpdate(
+                    { email: data.email, submission_name: data.submission_name },
+                    {
+                        execution_date: new Date().toISOString(),
+                        execution_secs: data.execution_secs,
+                        output_data: data.output_data,
+                    }
+                );
+            }
+
+            else if (topic == "execution-routing-request") {
+                const email = message.key.toString();
+                const submission_name = message.value.toString()
+
+                const submission = await Submission.findOne({ email: email, submission_name: submission_name });
+                
+                // send input data to solver model to execute submission
+                producer.send({
+                    topic: "solver-routing-request",
+                    messages: [
+                        { value: JSON.stringify(submission) }
+                    ]
+                })
+                isRunning = true;
+            }
+
+            else if (topic === "create-submission-routing-request") {    
+                const data = JSON.parse(message.value.toString());
+
+                try {
+                    // Delete all submissions matching email and submission_name
+                    const deleteResult = await Submission.deleteMany({
+                        email: data.email,
+                        submission_name: data.submission_name
+                    });
+                    console.log("Number of documents deleted:", deleteResult.deletedCount);
+                } catch (error) {
+                    console.error("Error deleting submissions:", error);
+                }
 
                 const newSubmission = new Submission({
                     submission_name: data.submission_name,
@@ -95,7 +141,7 @@ const main = async () => {
             }
         }
     });
-    console.log("Service user-store-routing is running");
+    console.log("Service store-routing is running");
 
 };
 

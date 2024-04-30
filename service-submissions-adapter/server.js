@@ -100,6 +100,19 @@ const main = async () => {
         res.sendStatus(200);
     });
 
+    app.post('/submission-execute/:type', (req, res) => {
+        producer.send({
+            topic: `execution-${req.params.type}-request`,
+            messages: [
+                {
+                    key: req.body.email.toString(),
+                    value: req.body.submission_name.toString()
+                }
+            ]
+        })
+        res.sendStatus(200);
+    })
+
     app.listen(4011, () => {
 		console.log("Service submissions-adapter is running");
 	});
