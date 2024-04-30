@@ -1,6 +1,28 @@
 services:
+  mongodb-store-routing:
+    container_name: mongodb-store-routing
+    image: mongodb/mongodb-community-server:6.0-ubi8
+    ports:
+      - 27018:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: user
+      MONGO_INITDB_ROOT_PASSWORD: pass
+    restart:
+      always
+  # service-user-data-adapter:
+  #   container_name: service-user-data-adapter
+  #   build: ./service-user-data-adapter
+  #   restart:
+  #     always
+
+  # service-user-data:
+  #   container_name: service-user-data-adapter
+  #   build: ./service-user-data
+  #   restart:
+  #     always
 
   mongodb-user-data:
+    container_name: mongodb-user-data
     image: mongodb/mongodb-community-server:6.0-ubi8
     ports:
       - 27017:27017
@@ -11,6 +33,7 @@ services:
       always
 
   zookeeper:
+    container_name: zookeeper
     image: confluentinc/cp-zookeeper:7.4.4
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
@@ -21,6 +44,7 @@ services:
       always
   
   kafka:
+    container_name: kafka-broker
     image: confluentinc/cp-kafka:7.4.4
     depends_on:
       - zookeeper
