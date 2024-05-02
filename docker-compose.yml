@@ -9,17 +9,17 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: pass
     restart:
       always
-  # service-user-data-adapter:
-  #   container_name: service-user-data-adapter
-  #   build: ./service-user-data-adapter
-  #   restart:
-  #     always
 
-  # service-user-data:
-  #   container_name: service-user-data-adapter
-  #   build: ./service-user-data
-  #   restart:
-  #     always
+  mongodb-submissions-logs-data:
+    container_name: mongodb-submissions-logs-data
+    image: mongodb/mongodb-community-server:6.0-ubi8
+    ports:
+      - 27019:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: user
+      MONGO_INITDB_ROOT_PASSWORD: pass
+    restart:
+      always
 
   mongodb-user-data:
     container_name: mongodb-user-data
