@@ -16,6 +16,13 @@ const consumer = kafka.consumer({ groupId: "service-submissions-adapter" });
 const single_submission = {};
 const user_subissions = {};
 const all_submissions = {};
+// For storing the state of the solvers (running or not)
+const solverRunning = {
+    "routing": false,
+    "scheduling": false,
+    "assignments": false,
+    "packing": false
+};
 
 const main = async () => {
     await producer.connect();
@@ -25,7 +32,8 @@ const main = async () => {
         topics: [
             "get-submission-routing-response",
             "get-user-submissions-response",
-            "get-all-submissions-response"
+            "get-all-submissions-response",
+            "solvers-general-response"
         ],
         fromBeginning: true
     });
@@ -36,6 +44,11 @@ const main = async () => {
                 const email = message.key.toString();
                 const submission = message.value.toString();
                 single_submission[email] = JSON.parse(submission)
+            }
+            else if (topic == "solvers-general-response") {
+                const data = JSON.parse(message.value.toString());
+                // Set state of {type} solver to Running
+                solverRunning[data.solver_type] = false
             }
         }
     })
@@ -110,7 +123,14 @@ const main = async () => {
                 }
             ]
         })
+        // Set state of {type} solver to Running
+        solverRunning[req.params.type] = true
+
         res.sendStatus(200);
+    })
+
+    app.get('/solvers-state/', (req, res) => {
+        res.send(solverRunning)
     })
 
     app.listen(4011, () => {

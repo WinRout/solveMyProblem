@@ -1,6 +1,7 @@
 
 import json
 import time
+import datetime
 
 from math import radians, sin, cos, sqrt, atan2
 from ortools.constraint_solver import routing_enums_pb2
@@ -169,6 +170,11 @@ def kafka_consumer():
         'client.id': 'service-solver-routing',
         # 'auto.offset.reset': 'smallest'
         })
+    # Setup Kafka Producer
+    producer = Producer({
+    'bootstrap.servers': 'localhost:29092',
+    'client.id': 'service-solver-routing',
+    })
     
     consumer.subscribe(['solver-routing-request'])
     print('Service solver routing is running.')
@@ -186,6 +192,7 @@ def kafka_consumer():
             data = msg.value().decode('utf-8')
             data_dict = json.loads(data)
             sol_text, sol_list, time_taken_seconds = run_submission(data_dict['input_data'], data_dict['max_secs'])
+            now = datetime.datetime.now(datetime.timezone.utc).isoformat()
             
             data_to_sent = {}
             data_to_sent["email"] = data_dict['email']
@@ -196,18 +203,22 @@ def kafka_consumer():
                 "list": sol_list
             }
             data_to_sent['execution_secs'] = time_taken_seconds
-            produce_output(data_to_sent)
+            data_to_sent['execution_date'] = now
+            produce_output(producer, 'solver-routing-response', data_to_sent)
 
-def produce_output(data):
-    # Setup Kafka producer
-    producer = Producer({
-        'bootstrap.servers': 'localhost:29092',
-        'client.id': 'service-solver-routing',
-        })
-    producer.produce('solver-routing-response', value=json.dumps(data))
+            minimal_data = {
+                "email": data_to_sent["email"],
+                "solver_type": "routing", # Don't forget to change in others solvers
+                "execution_date": data_to_sent["execution_date"],
+                "execution_secs": data_to_sent["execution_secs"]
+            }
+            produce_output(producer, 'solvers-general-response', minimal_data)
+
+def produce_output(producer, topic, data):
+    producer.produce(topic, value=json.dumps(data))
     producer.poll(200)
     # producer.flush()
-    print('message sent')
+    print(f'message to {topic} published!')
 
 if __name__ == '__main__':
     kafka_consumer()
