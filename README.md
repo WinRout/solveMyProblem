@@ -8,7 +8,7 @@
 
 ### instructions
 
-To build users' mongodb and kafka broker:
+To build microservices, mongo databases and kafka broker:
 
 ```sh
 sudo docker compose up --wait
@@ -19,5 +19,3 @@ To start the development environment of the frontend, run inside the frontend fo
 npx next dev
 ```
 Join the frontend from `localhost:3000`
-
-After that, to start the service-user-data and service-user-data-adapter according to their instructions. Read the README.md of each.
