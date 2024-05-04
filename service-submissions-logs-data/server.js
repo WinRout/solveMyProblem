@@ -3,7 +3,7 @@ const mongoose = require("mongoose")
 
 const kafka = new Kafka({
     clientId: "service-submissions-logs-data",
-    brokers: ["localhost:29092"],
+    brokers: ["kafka-broker:9092"],
     retries: 10,
 });
 
@@ -13,7 +13,7 @@ const consumer = kafka.consumer({ groupId: "service-submissions-logs-data" });
 
 const main = async () => {
 
-    await mongoose.connect("mongodb://user:pass@localhost:27018/Logs?authSource=admin");
+    await mongoose.connect("mongodb://user:pass@mongodb-submissions-logs-data:27017/Logs?authSource=admin");
 
     const LogSchema = new mongoose.Schema({
         email: String,

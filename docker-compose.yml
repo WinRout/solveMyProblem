@@ -1,37 +1,91 @@
 services:
+
+
+
+  # ADAPTER SERVICES 
+  service-user-data-adapter:
+    container_name: service-user-data-adapter
+    build: ./service-user-data-adapter
+    ports:
+      - 4010:4010
+    restart: 
+      always
+
+  service-submissions-adapter:
+    container_name: service-submissions-adapter
+    build: ./service-submissions-adapter
+    ports:
+      - 4011:4011
+    restart: 
+      always
+
+  service-submissions-logs-adapter:
+    container_name: service-submissions-logs-adapter
+    build: ./service-submissions-logs-adapter
+    ports:
+      - 4012:4012
+    restart: 
+      always
+
+
+  
+  # DATA STORE SERVICES
+  service-store-routing:
+    container_name: service-store-routing
+    build: ./service-store-routing
+    restart: 
+      always
   mongodb-store-routing:
     container_name: mongodb-store-routing
     image: mongodb/mongodb-community-server:6.0-ubi8
-    ports:
-      - 27018:27017
     environment:
       MONGO_INITDB_ROOT_USERNAME: user
       MONGO_INITDB_ROOT_PASSWORD: pass
     restart:
       always
 
+
+  service-submissions-logs-data:
+    container_name: service-submissions-logs-data
+    build: ./service-submissions-logs-data
+    restart: 
+      always
   mongodb-submissions-logs-data:
     container_name: mongodb-submissions-logs-data
     image: mongodb/mongodb-community-server:6.0-ubi8
-    ports:
-      - 27019:27017
     environment:
       MONGO_INITDB_ROOT_USERNAME: user
       MONGO_INITDB_ROOT_PASSWORD: pass
     restart:
       always
 
+
+  service-user-data:
+    container_name: service-user-data
+    build: ./service-user-data
+    restart: 
+      always
   mongodb-user-data:
     container_name: mongodb-user-data
     image: mongodb/mongodb-community-server:6.0-ubi8
-    ports:
-      - 27017:27017
     environment:
       MONGO_INITDB_ROOT_USERNAME: user
       MONGO_INITDB_ROOT_PASSWORD: pass
     restart:
       always
 
+
+
+  # SOLVER SERVICES
+  service-solver-routing:
+    container_name: service-solver-routing
+    build: ./service-solver-routing
+    restart: 
+      always
+
+
+
+  # CHOREOGRAPHER SERVICES
   zookeeper:
     container_name: zookeeper
     image: confluentinc/cp-zookeeper:7.4.4

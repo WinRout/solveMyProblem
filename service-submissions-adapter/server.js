@@ -5,7 +5,7 @@ const app = express();
 
 const kafka = new Kafka({
     clientId: "service-submissions-adapter",
-    brokers: ["localhost:29092"],
+    brokers: ["kafka-broker:9092"],
     retries: 10,
 });
 
@@ -81,12 +81,15 @@ const main = async () => {
         - When received submission from kafka topic, I can continue
         */
         while (single_submission[email] === undefined) {
-            await new Promise(resolve => setTimeout(resolve, 500));
+            await new Promise(resolve => setTimeout(resolve, 1000));
         }
 
-        res.send(single_submission[email]);
-
+        send_data = single_submission[email]
         single_submission[email] = undefined
+
+        res.send(send_data);
+
+
     });
 
     app.post('/submission-create/:type', (req, res) => {

@@ -165,14 +165,14 @@ def run_submission(input_data, max_secs):
 def kafka_consumer():
     # Setup Kafka consumer
     consumer = Consumer({
-        'bootstrap.servers': 'localhost:29092', 
+        'bootstrap.servers': 'kafka-broker:9092', 
         'group.id': 'service-solver-routing',
         'client.id': 'service-solver-routing',
         # 'auto.offset.reset': 'smallest'
         })
     # Setup Kafka Producer
     producer = Producer({
-    'bootstrap.servers': 'localhost:29092',
+    'bootstrap.servers': 'kafka-broker:9092',
     'client.id': 'service-solver-routing',
     })
     

@@ -5,7 +5,7 @@ const app = express();
 
 const kafka = new Kafka({
     clientId: "service-submissions-logs-adapter",
-    brokers: ["localhost:29092"],
+    brokers: ["kafka-broker:9092"],
     retries: 10,
 });
 

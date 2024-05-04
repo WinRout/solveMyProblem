@@ -5,7 +5,7 @@ const app = express();
 
 const kafka = new Kafka({
     clientId: "service-user-data-adapter",
-    brokers: ["localhost:29092"],
+    brokers: ["kafka-broker:9092"],
     retries: 10,
 });
 
@@ -64,14 +64,14 @@ const main = async () => {
         - When received user from kafka topic, I can continue
         */
         while (users[email] === undefined) {
-            await new Promise(resolve => setTimeout(resolve, 500));
+            await new Promise(resolve => setTimeout(resolve, 1000));
         }
 
-        // If user is null, it means that he is not in the User database
-        res.send(users[email] === null ? {} : users[email]);
-
+        send_data = users[email];
         // Forget user, so next time will be surely updated before res.send
         users[email] = undefined;
+        // If user is null, it means that he is not in the User database
+        res.send(users[email] === null ? {} : send_data);
     });
 
     app.post('/user-create', (req, res) => {

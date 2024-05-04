@@ -3,7 +3,7 @@ const mongoose = require("mongoose")
 
 const kafka = new Kafka({
     clientId: "service-store-routing",
-    brokers: ["localhost:29092"],
+    brokers: ["kafka-broker:9092"],
     retries: 10,
 });
 
@@ -15,7 +15,7 @@ let isRunning = false;
 
 const main = async () => {
 
-    await mongoose.connect("mongodb://user:pass@localhost:27018/Submissions?authSource=admin");
+    await mongoose.connect("mongodb://user:pass@mongodb-store-routing:27017/Submissions?authSource=admin");
 
     const SubmissionSchema = new mongoose.Schema({
         submission_name: String,
