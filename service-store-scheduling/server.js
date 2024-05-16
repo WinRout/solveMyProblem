@@ -2,20 +2,20 @@ const { Kafka } = require("kafkajs")
 const mongoose = require("mongoose")
 
 const kafka = new Kafka({
-    clientId: "service-store-routing",
+    clientId: "service-store-scheduling",
     brokers: ["kafka-broker:9092"],
     retries: 10,
 });
 
 const producer = kafka.producer();
-const consumer = kafka.consumer({ groupId: "service-store-routing" });
+const consumer = kafka.consumer({ groupId: "service-store-scheduling" });
 
 // Boolean value to save the running state of the solver
 let isRunning = false;
 
 const main = async () => {
 
-    await mongoose.connect("mongodb://user:pass@mongodb-store-routing:27017/Submissions?authSource=admin");
+    await mongoose.connect("mongodb://user:pass@mongodb-store-scheduling:27017/Submissions?authSource=admin");
 
     const SubmissionSchema = new mongoose.Schema({
         submission_name: String,
@@ -36,15 +36,15 @@ const main = async () => {
 
     await consumer.subscribe({
         topics: [
-            "create-submission-routing-request", // create a submission
-            "update-submission-routing-request", // update a sumbission
-            "get-submission-routing-request", // for the View/Edit submission screen 
+            "create-submission-scheduling-request", // create a submission
+            "update-submission-scheduling-request", // update a sumbission
+            "get-submission-scheduling-request", // for the View/Edit submission screen 
             // The below topics are TO DO
             "get-user-submissions-request", // for the User's Submissions' list screen
             "get-all-submissions-request", // for the Admin's Submissions' list screen
             // The above topics are TO DO 
-            "execution-routing-request", // for when requested to execute a submission from adapter
-            "solver-routing-response" // for updating results after execution
+            "execution-scheduling-request", // for when requested to execute a submission from adapter
+            "solver-scheduling-response" // for updating results after execution
         ],
         fromBeginning: false
     })
@@ -52,7 +52,7 @@ const main = async () => {
     await consumer.run({
         eachMessage: async ({ message, topic }) => {
 
-            if (topic == "solver-routing-response") {
+            if (topic == "solver-scheduling-response") {
                 const data = JSON.parse(message.value.toString());
                 // set running state of solver to false
                 isRunning = false;
@@ -67,7 +67,7 @@ const main = async () => {
                 );
             }
 
-            else if (topic == "execution-routing-request") {
+            else if (topic == "execution-scheduling-request") {
                 const email = message.key.toString();
                 const submission_name = message.value.toString()
 
@@ -75,7 +75,7 @@ const main = async () => {
                 
                 // send input data to solver model to execute submission
                 producer.send({
-                    topic: "solver-routing-request",
+                    topic: "solver-scheduling-request",
                     messages: [
                         { value: JSON.stringify(submission) }
                     ]
@@ -83,7 +83,7 @@ const main = async () => {
                 isRunning = true;
             }
 
-            else if (topic === "create-submission-routing-request") {    
+            else if (topic === "create-submission-scheduling-request") {    
                 const data = JSON.parse(message.value.toString());
 
                 try {
@@ -114,7 +114,7 @@ const main = async () => {
                 await newSubmission.save();
             }
 
-            else if (topic === "update-submission-routing-request") {
+            else if (topic === "update-submission-scheduling-request") {
                 const data = JSON.parse(message.value.toString());
 
                 await Submission.findOneAndUpdate(
@@ -127,13 +127,13 @@ const main = async () => {
                 );
             }
 
-            else if (topic == "get-submission-routing-request") {
+            else if (topic == "get-submission-scheduling-request") {
                 const email = message.key.toString();
                 const submission_name = message.value.toString();
                 const submission = await Submission.findOne({ email: email, submission_name: submission_name });
 
                 producer.send({
-                    topic: "get-submission-routing-response",
+                    topic: "get-submission-scheduling-response",
                     messages: [
                         { key: email, value: JSON.stringify(submission) }
                     ]
@@ -141,7 +141,7 @@ const main = async () => {
             }
         }
     });
-    console.log("Service store-routing is running");
+    console.log("Service store-scheduling is running");
 
 };
 
