@@ -60,13 +60,13 @@ const main = async () => {
         /*
         - A Promise represents the eventual outcome (resolve, reject) of an async operation.
         - In this case we want to asynchroniously wait to receive message in kafka topic,
-        so we "resolve" the promise after 100ms.
+        so we "resolve" the promise after 1000ms.
         - When received user from kafka topic, I can continue
         */
-        const MAX_TRIES = 3;
+        const MAX_TRIES = 6;
 
         for (let tries = 0; tries < MAX_TRIES; tries++) {
-          await new Promise(resolve => setTimeout(resolve, 1000));
+          await new Promise(resolve => setTimeout(resolve, 200));
           if (users[email] !== undefined) {
             break; // Exit loop if user data is found
           }

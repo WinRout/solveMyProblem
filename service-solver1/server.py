@@ -51,18 +51,21 @@ def kafka_consumer():
     consumer.subscribe(['solver-request'])
     print('Service solver is running.')
     while True:
+
         msg = consumer.poll(1.0)
         if msg is None:
             continue
         if msg.error():
             print("Consumer error: {}".format(msg.error()))
             continue
-        print('received message')
-        # data = msg.value().decode('utf-8')
-        # print(json.loads(data))
+
         if (msg.topic() == 'solver-request'):
             data = msg.value().decode('utf-8')
             data_dict = json.loads(data)
+        
+            # inform that execution is starting
+            produce_output(producer, 'solver-execution-start', {'email':data_dict['email'], 'submission_name':data_dict['submission_name']}) 
+
             result = run_submission(data_dict['code'], data_dict['input_data'])
             now = datetime.datetime.now(datetime.timezone.utc).isoformat()
             
@@ -78,6 +81,7 @@ def kafka_consumer():
 
             minimal_data = {
                 "email": data_to_sent["email"],
+                "submission_name": data_to_sent["submission_name"],
                 "execution_date": data_to_sent["execution_date"],
                 "execution_secs": data_to_sent["execution_secs"]
             }

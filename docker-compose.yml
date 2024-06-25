@@ -46,6 +46,22 @@ services:
       always
 
 
+  service-user-submissions:
+    container_name: service-user-submissions
+    build: ./service-user-submissions
+    restart: 
+      always
+
+  mongodb-user-submissions:
+    container_name: mongodb-user-submissions
+    image: mongodb/mongodb-community-server:6.0-ubi8
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: user
+      MONGO_INITDB_ROOT_PASSWORD: pass
+    restart:
+      always
+
+
 
   service-submissions-logs-data:
     container_name: service-submissions-logs-data

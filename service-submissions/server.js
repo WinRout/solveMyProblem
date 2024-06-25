@@ -10,9 +10,6 @@ const kafka = new Kafka({
 const producer = kafka.producer();
 const consumer = kafka.consumer({ groupId: "service-submissions" });
 
-// Boolean value to save the running state of the solver
-let isRunning = false;
-
 const main = async () => {
 
     await mongoose.connect("mongodb://user:pass@mongodb-submissions:27017/Submissions?authSource=admin");
@@ -40,10 +37,6 @@ const main = async () => {
             "create-submission-request", // create a submission
             "update-submission-request", // update a sumbission
             "get-submission-request", // for the View/Edit submission screen 
-            // The below topics are TO DO
-            "get-user-submissions-request", // for the User's Submissions' list screen
-            "get-all-submissions-request", // for the Admin's Submissions' list screen
-            // The above topics are TO DO 
             "execution-request", // for when requested to execute a submission from adapter
             "solver-response" // for updating results after execution
         ],
@@ -56,7 +49,6 @@ const main = async () => {
             if (topic == "solver-response") {
                 const data = JSON.parse(message.value.toString());
                 // set running state of solver to false
-                isRunning = false;
                 
                 await Submission.findOneAndUpdate(
                     { email: data.email, submission_name: data.submission_name },
@@ -81,7 +73,6 @@ const main = async () => {
                         { value: JSON.stringify(submission) }
                     ]
                 })
-                isRunning = true;
             }
 
             else if (topic === "create-submission-request") {    

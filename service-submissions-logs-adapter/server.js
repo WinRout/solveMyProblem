@@ -61,7 +61,7 @@ const main = async () => {
         - When received logs from kafka topic, I can continue
         */
         while (logs === undefined) {
-            await new Promise(resolve => setTimeout(resolve, 500));
+            await new Promise(resolve => setTimeout(resolve, 200));
         }
 
         res.send(logs);
