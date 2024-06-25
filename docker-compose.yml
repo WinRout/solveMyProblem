@@ -134,3 +134,24 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
     restart:
       always
+
+
+  init-kafka:
+    image: confluentinc/cp-kafka:7.4.4
+    depends_on:
+      - kafka
+    entrypoint: [ '/bin/sh', '-c' ]
+    command: |
+      "
+      # blocks until kafka is reachable
+      kafka-topics --bootstrap-server kafka-broker:9092 --list
+
+      echo -e 'Creating kafka topics'
+
+      # 10 PARITIONS = MAX 10 SOLVERS!
+      
+      kafka-topics --bootstrap-server kafka-broker:9092 --create --if-not-exists --topic solver-request --replication-factor 1 --partitions 10
+
+      echo -e 'Successfully created the following topics:'
+      kafka-topics --bootstrap-server kafka-broker:9092 --list
+      "
