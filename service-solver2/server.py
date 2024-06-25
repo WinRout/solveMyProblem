@@ -39,13 +39,13 @@ def kafka_consumer():
     consumer = Consumer({
         'bootstrap.servers': 'kafka-broker:9092', 
         'group.id': 'service-solver',
-        'client.id': 'service-solver1',
+        'client.id': 'service-solver2',
         'auto.offset.reset': 'earliest'
         })
     # Setup Kafka Producer
     producer = Producer({
     'bootstrap.servers': 'kafka-broker:9092',
-    'client.id': 'service-solver1',
+    'client.id': 'service-solver2',
     })
     
     consumer.subscribe(['solver-request'])
