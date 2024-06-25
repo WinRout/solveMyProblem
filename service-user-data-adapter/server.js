@@ -63,15 +63,20 @@ const main = async () => {
         so we "resolve" the promise after 100ms.
         - When received user from kafka topic, I can continue
         */
-        while (users[email] === undefined) {
-            await new Promise(resolve => setTimeout(resolve, 1000));
+        const MAX_TRIES = 3;
+
+        for (let tries = 0; tries < MAX_TRIES; tries++) {
+          await new Promise(resolve => setTimeout(resolve, 1000));
+          if (users[email] !== undefined) {
+            break; // Exit loop if user data is found
+          }
         }
 
         send_data = users[email];
         // Forget user, so next time will be surely updated before res.send
         users[email] = undefined;
         // If user is null, it means that he is not in the User database
-        res.send(users[email] === null ? {} : send_data);
+        res.send(send_data === null ? {} : send_data);
     });
 
     app.post('/user-create', (req, res) => {

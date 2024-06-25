@@ -1,5 +1,7 @@
 const { Kafka } = require("kafkajs");
 const express = require("express");
+const bodyParser = require('body-parser');
+const multer = require('multer');
 
 const app = express();
 
@@ -12,17 +14,13 @@ const kafka = new Kafka({
 const producer = kafka.producer();
 const consumer = kafka.consumer({ groupId: "service-submissions-adapter" });
 
-// For storing submissions got from kafka topic
+// For storing submissions got from kafka topic. For each account request (key: email, val: submission)
 const single_submission = {};
-const user_subissions = {};
-const all_submissions = {};
-// For storing the state of the solvers (running or not)
-const solverRunning = {
-    "routing": false,
-    "scheduling": false,
-    "assignments": false,
-    "packing": false
-};
+
+// Multer setup
+const storage = multer.memoryStorage();  // Store files in memory
+const upload = multer({ storage });
+
 
 const main = async () => {
     await producer.connect();
@@ -30,7 +28,7 @@ const main = async () => {
 
     await consumer.subscribe({
         topics: [
-            "get-submission-routing-response",
+            "get-submission-response",
             "get-user-submissions-response",
             "get-all-submissions-response",
             "solvers-general-response"
@@ -40,16 +38,16 @@ const main = async () => {
 
     await consumer.run({
         eachMessage: async ({ topic, message }) => {
-            if (topic == "get-submission-routing-response") {
+            if (topic == "get-submission-response") {
                 const email = message.key.toString();
                 const submission = message.value.toString();
                 single_submission[email] = JSON.parse(submission)
             }
-            else if (topic == "solvers-general-response") {
-                const data = JSON.parse(message.value.toString());
-                // Set state of {type} solver to Running
-                solverRunning[data.solver_type] = false
-            }
+            // else if (topic == "solvers-general-response") {
+            //     const data = JSON.parse(message.value.toString());
+            //     // Set state of {type} solver to Running
+            //     solverRunning[data.solver_type] = false
+            // }
         }
     })
 
@@ -63,13 +61,12 @@ const main = async () => {
 		next();
 	}, express.json());
 
-    app.get('/submission-get/:type/:email/:submission_name', async (req, res) => {
-        const type = req.params.type
+    app.get('/submission-get/:email/:submission_name', async (req, res) => {
         const email = req.params.email
         const submission_name = req.params.submission_name
 
         producer.send({
-            topic: `get-submission-${type}-request`,
+            topic: `get-submission-request`,
             messages: [
                 { key: email, value: submission_name }
             ]
@@ -83,18 +80,44 @@ const main = async () => {
         while (single_submission[email] === undefined) {
             await new Promise(resolve => setTimeout(resolve, 1000));
         }
-
         send_data = single_submission[email]
         single_submission[email] = undefined
 
         res.send(send_data);
-
-
     });
 
-    app.post('/submission-create/:type', (req, res) => {
+    app.post('/submission-create', 
+        upload.fields([
+            { name: 'pyFile', maxCount: 1 }, 
+            { name: 'jsonFile', maxCount: 1 }]), 
+
+        async (req, res) => {
+        
+        const pyFile = req.files.pyFile[0].buffer.toString('utf-8');
+        const jsonFile = req.files.jsonFile[0].buffer.toString('utf-8');
+        const metadata = JSON.parse(req.body.metadata);
+
+        const message = {
+            code: pyFile,
+            input_data: jsonFile,
+            metadata: metadata 
+        }
+
         producer.send({
-            topic: `create-submission-${req.params.type}-request`,
+            topic: `create-submission-request`,
+            messages: [
+                {
+                    value: JSON.stringify(message)
+                }
+            ]
+        })
+        console.log(message)
+        res.sendStatus(200);
+    });
+
+    app.post('/submission-update', (req, res) => {
+        producer.send({
+            topic: `update-submission-request`,
             messages: [
                 {
                     value: JSON.stringify(req.body)
@@ -104,21 +127,9 @@ const main = async () => {
         res.sendStatus(200);
     });
 
-    app.post('/submission-update/:type', (req, res) => {
+    app.post('/submission-execute', (req, res) => {
         producer.send({
-            topic: `update-submission-${req.params.type}-request`,
-            messages: [
-                {
-                    value: JSON.stringify(req.body)
-                }
-            ]
-        })
-        res.sendStatus(200);
-    });
-
-    app.post('/submission-execute/:type', (req, res) => {
-        producer.send({
-            topic: `execution-${req.params.type}-request`,
+            topic: `execution-request`,
             messages: [
                 {
                     key: req.body.email.toString(),
@@ -126,14 +137,7 @@ const main = async () => {
                 }
             ]
         })
-        // Set state of {type} solver to Running
-        solverRunning[req.params.type] = true
-
         res.sendStatus(200);
-    })
-
-    app.get('/solvers-state/', (req, res) => {
-        res.send(solverRunning)
     })
 
     app.listen(4011, () => {

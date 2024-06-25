@@ -2,31 +2,32 @@ const { Kafka } = require("kafkajs")
 const mongoose = require("mongoose")
 
 const kafka = new Kafka({
-    clientId: "service-store-routing",
+    clientId: "service-submissions",
     brokers: ["kafka-broker:9092"],
     retries: 10,
 });
 
 const producer = kafka.producer();
-const consumer = kafka.consumer({ groupId: "service-store-routing" });
+const consumer = kafka.consumer({ groupId: "service-submissions" });
 
 // Boolean value to save the running state of the solver
 let isRunning = false;
 
 const main = async () => {
 
-    await mongoose.connect("mongodb://user:pass@mongodb-store-routing:27017/Submissions?authSource=admin");
+    await mongoose.connect("mongodb://user:pass@mongodb-submissions:27017/Submissions?authSource=admin");
 
     const SubmissionSchema = new mongoose.Schema({
         submission_name: String,
         email: String,
+        code: Object,
         input_data: Object,
-        max_secs: Number,
         creation_date: Date,
         update_date: Date,
         execution_date: Date,
         execution_secs: Number,
-        output_data: Object
+        output_data: Object,
+        error: String
     })
 
     const Submission = mongoose.model("Submission", SubmissionSchema)
@@ -36,15 +37,15 @@ const main = async () => {
 
     await consumer.subscribe({
         topics: [
-            "create-submission-routing-request", // create a submission
-            "update-submission-routing-request", // update a sumbission
-            "get-submission-routing-request", // for the View/Edit submission screen 
+            "create-submission-request", // create a submission
+            "update-submission-request", // update a sumbission
+            "get-submission-request", // for the View/Edit submission screen 
             // The below topics are TO DO
             "get-user-submissions-request", // for the User's Submissions' list screen
             "get-all-submissions-request", // for the Admin's Submissions' list screen
             // The above topics are TO DO 
-            "execution-routing-request", // for when requested to execute a submission from adapter
-            "solver-routing-response" // for updating results after execution
+            "execution-request", // for when requested to execute a submission from adapter
+            "solver-response" // for updating results after execution
         ],
         fromBeginning: false
     })
@@ -52,7 +53,7 @@ const main = async () => {
     await consumer.run({
         eachMessage: async ({ message, topic }) => {
 
-            if (topic == "solver-routing-response") {
+            if (topic == "solver-response") {
                 const data = JSON.parse(message.value.toString());
                 // set running state of solver to false
                 isRunning = false;
@@ -67,7 +68,7 @@ const main = async () => {
                 );
             }
 
-            else if (topic == "execution-routing-request") {
+            else if (topic == "execution-request") {
                 const email = message.key.toString();
                 const submission_name = message.value.toString()
 
@@ -75,7 +76,7 @@ const main = async () => {
                 
                 // send input data to solver model to execute submission
                 producer.send({
-                    topic: "solver-routing-request",
+                    topic: "solver-request",
                     messages: [
                         { value: JSON.stringify(submission) }
                     ]
@@ -83,14 +84,18 @@ const main = async () => {
                 isRunning = true;
             }
 
-            else if (topic === "create-submission-routing-request") {    
+            else if (topic === "create-submission-request") {    
                 const data = JSON.parse(message.value.toString());
+
+                const code = data.code
+                const input_data =  data.input_data
+                const metadata = data.metadata
 
                 try {
                     // Delete all submissions matching email and submission_name
                     const deleteResult = await Submission.deleteMany({
-                        email: data.email,
-                        submission_name: data.submission_name
+                        email: metadata.email,
+                        submission_name: metadata.submission_name
                     });
                     console.log("Number of documents deleted:", deleteResult.deletedCount);
                 } catch (error) {
@@ -98,10 +103,10 @@ const main = async () => {
                 }
 
                 const newSubmission = new Submission({
-                    submission_name: data.submission_name,
-                    email: data.email,
-                    input_data: data.input_data,
-                    max_secs: data.max_secs,
+                    submission_name: metadata.submission_name,
+                    email: metadata.email,
+                    code: code,
+                    input_data: input_data,
                     // the below do not require data from message
                     creation_date: new Date().toISOString(),
                     update_date: new Date().toISOString(),
@@ -114,26 +119,25 @@ const main = async () => {
                 await newSubmission.save();
             }
 
-            else if (topic === "update-submission-routing-request") {
+            else if (topic === "update-submission-request") {
                 const data = JSON.parse(message.value.toString());
 
                 await Submission.findOneAndUpdate(
                     { email: data.email, submission_name: data.submission_name },
                     {
                         input_data: data.input_data,
-                        max_secs: data.max_secs,
                         update_date: new Date().toISOString()
                     }
                 );
             }
 
-            else if (topic == "get-submission-routing-request") {
+            else if (topic == "get-submission-request") {
                 const email = message.key.toString();
                 const submission_name = message.value.toString();
                 const submission = await Submission.findOne({ email: email, submission_name: submission_name });
 
                 producer.send({
-                    topic: "get-submission-routing-response",
+                    topic: "get-submission-response",
                     messages: [
                         { key: email, value: JSON.stringify(submission) }
                     ]
@@ -141,7 +145,7 @@ const main = async () => {
             }
         }
     });
-    console.log("Service store-routing is running");
+    console.log("Service submissions is running");
 
 };
 

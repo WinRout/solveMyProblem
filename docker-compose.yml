@@ -30,13 +30,14 @@ services:
 
   
   # DATA STORE SERVICES
-  service-store-routing:
-    container_name: service-store-routing
-    build: ./service-store-routing
+  service-submissions:
+    container_name: service-submissions
+    build: ./service-submissions
     restart: 
       always
-  mongodb-store-routing:
-    container_name: mongodb-store-routing
+
+  mongodb-submissions:
+    container_name: mongodb-submissions
     image: mongodb/mongodb-community-server:6.0-ubi8
     environment:
       MONGO_INITDB_ROOT_USERNAME: user
@@ -45,11 +46,13 @@ services:
       always
 
 
+
   service-submissions-logs-data:
     container_name: service-submissions-logs-data
     build: ./service-submissions-logs-data
     restart: 
       always
+
   mongodb-submissions-logs-data:
     container_name: mongodb-submissions-logs-data
     image: mongodb/mongodb-community-server:6.0-ubi8
@@ -60,11 +63,13 @@ services:
       always
 
 
+
   service-user-data:
     container_name: service-user-data
     build: ./service-user-data
     restart: 
       always
+      
   mongodb-user-data:
     container_name: mongodb-user-data
     image: mongodb/mongodb-community-server:6.0-ubi8
@@ -77,9 +82,9 @@ services:
 
 
   # SOLVER SERVICES
-  service-solver-routing:
-    container_name: service-solver-routing
-    build: ./service-solver-routing
+  service-solver1:
+    container_name: service-solver1
+    build: ./service-solver1
     restart: 
       always
 

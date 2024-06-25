@@ -46,12 +46,12 @@ const main = async () => {
 		next();
 	}, express.json());
 
-    app.get('/submissions-statistics-get/:type', async (req, res) => {
+    app.get('/submissions-statistics-get/:email', async (req, res) => {
 
         producer.send({
             topic: "submissions-logs-get-request",
             messages: [
-                { value: req.params.type }
+                { value: req.params.email }
             ]
         });
         /*

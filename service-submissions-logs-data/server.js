@@ -17,7 +17,6 @@ const main = async () => {
 
     const LogSchema = new mongoose.Schema({
         email: String,
-        solver_type: String,
         execution_date: Date,
         execution_secs: Number,
     })
@@ -44,7 +43,6 @@ const main = async () => {
                 // Create log
                 const newLog = new Log({
                     email: data.email,
-                    solver_type: data.solver_type,
                     execution_date: data.execution_date,
                     execution_secs: data.execution_secs
                 });
@@ -52,7 +50,9 @@ const main = async () => {
                 await newLog.save();
 
                 // Also notify user-data service to decrease credits by execution time
-                const spent_credits = -1 * Math.abs(data.execution_secs);
+                // const spent_credits = -1 * Math.abs(data.execution_secs);
+                // 1 credit spent per submission execution
+                const spent_credits = -1
                 
                 producer.send({
                     topic: "user-credits-update-request",
@@ -62,10 +62,8 @@ const main = async () => {
                 });
             }
             else if (topic == "submissions-logs-get-request") {
-                const solver_type = message.value.toString()
 
-                const logs = await Log.find({ solver_type: solver_type });
-
+                const logs = await Log.find({});
                 producer.send({
                     topic: "submissions-logs-get-response",
                     messages: [ 
