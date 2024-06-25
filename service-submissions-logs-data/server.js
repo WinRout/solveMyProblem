@@ -48,18 +48,6 @@ const main = async () => {
                 });
                 
                 await newLog.save();
-
-                // Also notify user-data service to decrease credits by execution time
-                // const spent_credits = -1 * Math.abs(data.execution_secs);
-                // 1 credit spent per submission execution
-                const spent_credits = -1
-                
-                producer.send({
-                    topic: "user-credits-update-request",
-                    messages: [ 
-                        { key: data.email, value: spent_credits.toString()}
-                    ]
-                });
             }
             else if (topic == "submissions-logs-get-request") {
 
