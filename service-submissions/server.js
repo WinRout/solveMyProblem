@@ -116,6 +116,7 @@ const main = async () => {
                 await Submission.findOneAndUpdate(
                     { email: data.email, submission_name: data.submission_name },
                     {
+                        code: data.code,
                         input_data: data.input_data,
                         update_date: new Date().toISOString()
                     }
