@@ -1,0 +1,24 @@
+{
+    "answers": {
+        "phase":  "architecture",
+        "action": "microservices definition",
+        "scope":  "uml component",
+        "action experience": 5,
+        "prog lang": "n/a",
+        "other prog lang": "<fill in>",
+        "aimodel": "chatgpt",
+        "aimodel version": "3.5",
+        "lmstudio-hosted aimodel": "<fill in>",
+        "tool option": "online free",
+        "experience with tool": 3,
+        "time allocated (h)": 2,
+        "time saved estimate (h)": 5, 
+        "quality of ai help": 3,
+        "knowledge acquired": 3,
+        "generic feeling - now": 2,
+        "generic feeling - future": 4,
+        "threat level": 0,
+        "notes": "<fill in>"
+    }
+}
+

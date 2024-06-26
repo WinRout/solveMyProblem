@@ -1,0 +1,24 @@
+{
+    "answers": {
+        "phase":  "coding",
+        "action": "source code authoring",
+        "scope":  "backend",
+        "action experience": 4,
+        "prog lang": "js-node",
+        "other prog lang": "<fill in>",
+        "aimodel": "lmstudio-hosted",
+        "aimodel version": "<fill in>",
+        "lmstudio-hosted aimodel": "WizardLM/WizardCoder-Python-34B-V1.0",
+        "tool option": "locally-run",
+        "experience with tool": 0,
+        "time allocated (h)": 10,
+        "time saved estimate (h)": 0, 
+        "quality of ai help": 2,
+        "knowledge acquired": 1,
+        "generic feeling - now": 1,
+        "generic feeling - future": 3,
+        "threat level": 2,
+        "notes": "<fill in>"
+    }
+}
+
