@@ -210,6 +210,20 @@ const main = async () => {
 
 
 
+    app.post('/submission-delete', (req, res) => {
+        producer.send({
+            topic: `delete-submission-request`,
+            messages: [
+                {
+                    value: JSON.stringify(req.body)
+                }
+            ]
+        })
+        res.sendStatus(200);
+    });
+
+
+
     app.post('/submission-execute', (req, res) => {
         
         producer.send({

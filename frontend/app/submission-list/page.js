@@ -53,6 +53,30 @@ const UserSubmissions = ({}) => {
     router.push(`/results-submission/${submissionId}`);
   };
 
+  const handleDelete = async (submissionName) => {
+    const body = {
+      submission_name: submissionName,
+      email: session?.user.email,
+    };
+
+    try {
+      const response = await fetch('http://localhost:4011/submission-delete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to execute submission');
+      }
+
+      console.log('Submission executed successfully!');
+    } catch (error) {
+      console.error('Error executing submission:', error);
+    }
+    window.location.reload();
+  };
+
   return (
     <div className="container mx-auto px-4 py-8">
       {submissions.length === 0 ? (
@@ -92,6 +116,12 @@ const UserSubmissions = ({}) => {
                   disabled={submission.state !== 'Executed'}
                 >
                   Results
+                </button>
+                <button
+                  className={`px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-700`}
+                  onClick={() => handleDelete(submission.submission_name)}
+                >
+                  Delete
                 </button>
               </div>
             </li>

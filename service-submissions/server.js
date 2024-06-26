@@ -36,6 +36,7 @@ const main = async () => {
         topics: [
             "create-submission-request", // create a submission
             "update-submission-request", // update a sumbission
+            "delete-submission-request", // delete a sumbission
             "get-submission-request", // for the View/Edit submission screen 
             "execution-request", // for when requested to execute a submission from adapter
             "solver-response" // for updating results after execution
@@ -120,6 +121,14 @@ const main = async () => {
                         input_data: data.input_data,
                         update_date: new Date().toISOString()
                     }
+                );
+            }
+
+            else if (topic === "delete-submission-request") {
+                const data = JSON.parse(message.value.toString());
+
+                await Submission.findOneAndDelete(
+                    { email: data.email, submission_name: data.submission_name },
                 );
             }
 

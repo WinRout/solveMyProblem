@@ -29,6 +29,7 @@ const main = async () => {
     await consumer.subscribe({
         topics: [
             "create-submission-request", // subscribe to create a User Submission
+            "delete-submission-request", // Delete User Submission
             "execution-request", // subscribe to update state to 'In Queue'
             "solver-execution-start", // subscribe to update state to 'Running'
             "solvers-general-response", // subscribe to update state to 'Executed'
@@ -62,6 +63,14 @@ const main = async () => {
                 });
                 
                 await newUserSubmission.save();
+            }
+
+            else if (topic === "delete-submission-request") {
+                const data = JSON.parse(message.value.toString());
+
+                await UserSubmission.findOneAndDelete(
+                    { email: data.email, submission_name: data.submission_name },
+                );
             }
 
             else if (topic == "execution-request") {

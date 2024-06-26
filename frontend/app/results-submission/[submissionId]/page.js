@@ -36,7 +36,7 @@ const EditSubmission = ({ params }) => {
   };
 
   const handleDownloadOutput = async () => {
-    const blob = new Blob([code], { type: 'text/plain;charset=utf-8' });
+    const blob = new Blob([submission.output_data], { type: 'text/plain;charset=utf-8' });
     const url = window.URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
@@ -45,7 +45,7 @@ const EditSubmission = ({ params }) => {
   };
 
   const handleDownloadCode = async () => {
-    const blob = new Blob([code], { type: 'text/x-python' });
+    const blob = new Blob([submission.code], { type: 'text/x-python' });
     const url = window.URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
@@ -54,7 +54,7 @@ const EditSubmission = ({ params }) => {
   };
 
   const handleDownloadInputData = async () => {
-    const blob = new Blob([inputData], { type: 'application/json' });
+    const blob = new Blob([submission.input_data], { type: 'application/json' });
     const url = window.URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
