@@ -9,6 +9,14 @@ services:
     restart: 
       always 
 
+  service-admin-panel:
+    container_name: service-admin-panel
+    build: ./admin-panel
+    ports:
+      - 3001:3000
+    restart: 
+      always 
+
   # ADAPTER SERVICES 
   service-user-data-adapter:
     container_name: service-user-data-adapter
