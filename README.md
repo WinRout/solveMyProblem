@@ -39,9 +39,16 @@ Ensure you have Docker installed on your machine. You can download Docker from [
    ```bash
    sudo docker compose up --wait
    
-3. Access the application
+4. Access the application
 
 Join the frontend from `http://localhost:3000`
 
 Join the admin panel from `http://localhost:3001`
 
+## Notes
+This application uses multiple solver services for parallel executions. You can set the number of solvers in the `.env` file of root directory. By default, solvers are 3. Also, note that each solver has a maximum execution time of 300 seconds. If this time is exceeded, solver stops, and submission output should be empty.
+
+## Example Inputs
+In `test_solver` directory a .py code and some .json input_data can be found. Use them as example of inputs. Note that the code of the submission: 
+- should be written in python
+- and should accept only one argument of inputs in json format
