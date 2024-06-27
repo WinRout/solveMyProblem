@@ -16,7 +16,7 @@ def run_submission(script_content, input_content):
     start_time = time.time()
 
     try:
-        result = subprocess.run(['python3', script_path, input_content], capture_output=True, text=True, timeout=60)
+        result = subprocess.run(['python3', script_path, input_content], capture_output=True, text=True, timeout=300)
         output = result.stdout
         error = result.stderr
     except subprocess.TimeoutExpired:
