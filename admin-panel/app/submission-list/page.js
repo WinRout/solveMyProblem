@@ -86,39 +86,39 @@ const UserSubmissions = ({}) => {
                 <span className="text-gray-500">{submission.state}</span>
               </div>
               <div className="flex flex-col">
-                <span className="text-gray-800">{submission.email}</span>
+                <span className="text-gray-700">{submission.email}</span>
               </div>
               <div className="flex space-x-2">
                 <button
                   className={`px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-700 ${
-                    submission.state === "📝 Draft" ? '' : 'disabled opacity-50 cursor-not-allowed'
+                    submission.state === '📝 Draft' ? '' : 'disabled opacity-50 cursor-not-allowed'
                   }`}
-                  onClick={() => handleExecute(submission.submission_name)}
-                  disabled={submission.state !== "📝 Draft"}
+                  onClick={() => handleExecute(submission)}
+                  disabled={submission.state !== '📝 Draft'}
                 >
                   Execute
                 </button>
                 <button
                   className={`px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-700 ${
-                    submission.state === "📝 Draft" ? '' : 'disabled opacity-50 cursor-not-allowed'
+                    submission.state === '📝 Draft' ? '' : 'disabled opacity-50 cursor-not-allowed'
                   }`}
-                  onClick={() => handleEdit(submission.submission_name)}
-                  disabled={submission.state !== "📝 Draft"}
+                  onClick={() => handleEdit(submission)}
+                  disabled={submission.state !== '📝 Draft'}
                 >
                   Edit
                 </button>
                 <button
                   className={`px-4 py-2 bg-purple-500 text-white rounded-md hover:bg-purple-700 ${
-                    submission.state === "🏁 Executed" ? '' : 'disabled opacity-50 cursor-not-allowed'
+                    submission.state === '🏁 Executed' ? '' : 'disabled opacity-50 cursor-not-allowed'
                   }`}
-                  onClick={() => handleResults(submission.submission_name)}
-                  disabled={submission.state !== "🏁 Executed"}
+                  onClick={() => handleResults(submission)}
+                  disabled={submission.state !== '🏁 Executed'}
                 >
                   Results
                 </button>
                 <button
                   className={`px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-700`}
-                  onClick={() => handleDelete(submission.submission_name)}
+                  onClick={() => handleDelete(submission)}
                 >
                   Delete
                 </button>
