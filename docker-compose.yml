@@ -113,18 +113,12 @@ services:
 
 
   # SOLVER SERVICES
-  service-solver1:
-    container_name: service-solver1
-    build: ./service-solver1
+  service-solver:
+    build: ./service-solver
     restart: 
       always
-
-  service-solver2:
-    container_name: service-solver2
-    build: ./service-solver2
-    restart: 
-      always
-
+    deploy:
+      replicas: ${NUM_SOLVERS}
 
 
   # CHOREOGRAPHER SERVICES
@@ -169,9 +163,9 @@ services:
 
       echo -e 'Creating kafka topics'
 
-      # 10 PARITIONS = MAX 10 SOLVERS!
+      # PARITIONS = MAX SOLVERS!
 
-      kafka-topics --bootstrap-server kafka-broker:9092 --create --if-not-exists --topic solver-request --replication-factor 1 --partitions 10
+      kafka-topics --bootstrap-server kafka-broker:9092 --create --if-not-exists --topic solver-request --replication-factor 1 --partitions ${NUM_SOLVERS}
 
       echo -e 'Successfully created the following topics:'
       kafka-topics --bootstrap-server kafka-broker:9092 --list
