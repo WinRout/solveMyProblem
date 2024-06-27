@@ -38,7 +38,7 @@ const main = async () => {
             "update-submission-request", // update a sumbission
             "delete-submission-request", // delete a sumbission
             "get-submission-request", // for the View/Edit submission screen 
-            "execution-request", // for when requested to execute a submission from adapter
+            "execution-request-accepted", // for when requested to execute a submission from adapter
             "solver-response" // for updating results after execution
         ],
         fromBeginning: false
@@ -61,7 +61,7 @@ const main = async () => {
                 );
             }
 
-            else if (topic == "execution-request") {
+            else if (topic == "execution-request-accepted") {
                 const email = message.key.toString();
                 const submission_name = message.value.toString()
 

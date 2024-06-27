@@ -22,27 +22,32 @@ const UserSubmissions = ({}) => {
   }, [session?.user.email]);
 
   const handleExecute = async (submissionName) => {
-    const body = {
-      submission_name: submissionName,
-      email: session?.user.email,
-    };
-
-    try {
-      const response = await fetch('http://localhost:4011/submission-execute', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to execute submission');
-      }
-
-      console.log('Submission executed successfully!');
-    } catch (error) {
-      console.error('Error executing submission:', error);
+    if (user.credits <= 0) {
+      alert(`Sorry, you need credits for executions!`)
     }
-    window.location.reload();
+    else {
+      const body = {
+        submission_name: submissionName,
+        email: session?.user.email,
+      };
+
+      try {
+        const response = await fetch('http://localhost:4011/submission-execute', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body),
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to execute submission');
+        }
+
+        console.log('Submission executed successfully!');
+      } catch (error) {
+        console.error('Error executing submission:', error);
+      }
+      window.location.reload();
+    }
   };
 
   const handleEdit = (submissionId) => {
@@ -92,28 +97,28 @@ const UserSubmissions = ({}) => {
               <div className="flex space-x-2">
                 <button
                   className={`px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-700 ${
-                    submission.state === 'Draft' ? '' : 'disabled opacity-50 cursor-not-allowed'
+                    submission.state === "📝 Draft" ? '' : 'disabled opacity-50 cursor-not-allowed'
                   }`}
                   onClick={() => handleExecute(submission.submission_name)}
-                  disabled={submission.state !== 'Draft'}
+                  disabled={submission.state !== "📝 Draft"}
                 >
                   Execute
                 </button>
                 <button
                   className={`px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-700 ${
-                    submission.state === 'Draft' ? '' : 'disabled opacity-50 cursor-not-allowed'
+                    submission.state === "📝 Draft" ? '' : 'disabled opacity-50 cursor-not-allowed'
                   }`}
                   onClick={() => handleEdit(submission.submission_name)}
-                  disabled={submission.state !== 'Draft'}
+                  disabled={submission.state !== "📝 Draft"}
                 >
                   Edit
                 </button>
                 <button
                   className={`px-4 py-2 bg-purple-500 text-white rounded-md hover:bg-purple-700 ${
-                    submission.state === 'Executed' ? '' : 'disabled opacity-50 cursor-not-allowed'
+                    submission.state === "🏁 Executed" ? '' : 'disabled opacity-50 cursor-not-allowed'
                   }`}
                   onClick={() => handleResults(submission.submission_name)}
-                  disabled={submission.state !== 'Executed'}
+                  disabled={submission.state !== "🏁 Executed"}
                 >
                   Results
                 </button>

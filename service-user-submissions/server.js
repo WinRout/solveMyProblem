@@ -30,7 +30,7 @@ const main = async () => {
         topics: [
             "create-submission-request", // subscribe to create a User Submission
             "delete-submission-request", // Delete User Submission
-            "execution-request", // subscribe to update state to 'In Queue'
+            "execution-request-accepted", // subscribe to update state to 'In Queue'
             "solver-execution-start", // subscribe to update state to 'Running'
             "solvers-general-response", // subscribe to update state to 'Executed'
             "get-user-submissions-request", // for the User's Submissions' list screen
@@ -59,7 +59,7 @@ const main = async () => {
                 const newUserSubmission = new UserSubmission({
                     submission_name: metadata.submission_name,
                     email: metadata.email,
-                    state: "Draft"
+                    state: "📝 Draft"
                 });
                 
                 await newUserSubmission.save();
@@ -73,14 +73,14 @@ const main = async () => {
                 );
             }
 
-            else if (topic == "execution-request") {
+            else if (topic == "execution-request-accepted") {
                 const email = message.key.toString();
                 const submission_name = message.value.toString()
 
                 await UserSubmission.findOneAndUpdate(
                     { email: email, submission_name: submission_name },
                     {
-                        state: "In Queue"
+                        state: "🟡 In Queue"
                     }
                 );
             }
@@ -91,7 +91,7 @@ const main = async () => {
                 await UserSubmission.findOneAndUpdate(
                     { email: data.email, submission_name: data.submission_name },
                     {
-                        state: "Running"
+                        state: "🟢 Running"
                     }
                 );
             }
@@ -102,7 +102,7 @@ const main = async () => {
                 await UserSubmission.findOneAndUpdate(
                     { email: data.email, submission_name: data.submission_name },
                     {
-                        state: "Executed"
+                        state: "🏁 Executed"
                     }
                 );
             }

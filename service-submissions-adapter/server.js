@@ -236,17 +236,6 @@ const main = async () => {
             ]
         })
 
-        // Also notify user-data service to decrease credits by execution time
-        // const spent_credits = -1 * Math.abs(data.execution_secs);
-        // 1 credit spent per submission execution
-        const spent_credits = -1
-        
-        producer.send({
-            topic: "user-credits-update-request",
-            messages: [ 
-                { key: req.body.email.toString(), value: spent_credits.toString()}
-            ]
-        });
         res.sendStatus(200);
     })
 

@@ -31,6 +31,7 @@ const main = async () => {
             "user-create-request",
             "user-credits-update-request",
             "user-get-request",
+            "execution-request"
         ],
         fromBeginning: false
     })
@@ -71,6 +72,28 @@ const main = async () => {
                         { key: email, value: JSON.stringify(user) }
                     ]
                 });
+            }
+
+            else if (topic == "execution-request") {
+                const email = message.key.toString();
+                const submission_name = message.value.toString()
+                const user = await User.findOne({ email: email });
+                if (user.credits > 0) {
+                    producer.send({
+                        topic: `execution-request-accepted`,
+                        messages: [
+                            {
+                                key: email,
+                                value: submission_name
+                            }
+                        ]
+                    })
+                    await User.findOneAndUpdate(
+                        { email: email},
+                        { $inc: { credits: -1 }}
+                    );
+                }
+                
             }
         }
     });
