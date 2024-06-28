@@ -119,6 +119,8 @@ services:
       always
     deploy:
       replicas: ${NUM_SOLVERS}
+    environment:
+      - MAX_EXEC_SECS=${MAX_EXEC_SECS}
 
 
   # CHOREOGRAPHER SERVICES
