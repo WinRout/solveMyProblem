@@ -133,10 +133,9 @@ const EditSubmission = ({ params }) => {
               )}
 
             </div>
-            <p>Error:</p>
             <div className="mt-2">
               {submission.error && (  // Conditionally render code content
-                <pre className="bg-gray-100 p-2 rounded-md overflow-auto max-h-64">
+                <pre className="bg-red-300 p-2 rounded-md overflow-auto max-h-64">
                   {submission.error}
                 </pre>
               )}
