@@ -56,10 +56,10 @@ const main = async () => {
         });
 
 
-        const MAX_TRIES = 3;
+        const MAX_TRIES = 5;
 
         for (let tries = 0; tries < MAX_TRIES; tries++) {
-            await new Promise(resolve => setTimeout(resolve, 200));
+            await new Promise(resolve => setTimeout(resolve, 100));
             if (logs!== undefined) {
                 break;
             }

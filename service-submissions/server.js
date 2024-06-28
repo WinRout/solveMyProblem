@@ -57,6 +57,7 @@ const main = async () => {
                         execution_date: data.execution_date,
                         execution_secs: data.execution_secs,
                         output_data: data.output_data,
+                        error: data.error
                     }
                 );
             }

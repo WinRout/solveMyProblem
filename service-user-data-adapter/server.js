@@ -63,10 +63,10 @@ const main = async () => {
         so we "resolve" the promise after 1000ms.
         - When received user from kafka topic, I can continue
         */
-        const MAX_TRIES = 6;
+        const MAX_TRIES = 5;
 
         for (let tries = 0; tries < MAX_TRIES; tries++) {
-          await new Promise(resolve => setTimeout(resolve, 200));
+          await new Promise(resolve => setTimeout(resolve, 100));
           if (users[email] !== undefined) {
             break; // Exit loop if user data is found
           }

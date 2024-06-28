@@ -99,7 +99,7 @@ const main = async () => {
         const MAX_TRIES = 5;
 
         for (let tries = 0; tries < MAX_TRIES; tries++) {
-            await new Promise(resolve => setTimeout(resolve, 200));
+            await new Promise(resolve => setTimeout(resolve, 100));
             if (single_submission[email] !== undefined) {
                 break;
             }
@@ -126,7 +126,7 @@ const main = async () => {
         const MAX_TRIES = 5;
 
         for (let tries = 0; tries < MAX_TRIES; tries++) {
-            await new Promise(resolve => setTimeout(resolve, 200));
+            await new Promise(resolve => setTimeout(resolve, 100));
             if (user_submissions[email] !== undefined) {
                 break;
             }
@@ -152,7 +152,7 @@ const main = async () => {
         const MAX_TRIES = 3;
 
         for (let tries = 0; tries < MAX_TRIES; tries++) {
-            await new Promise(resolve => setTimeout(resolve, 200));
+            await new Promise(resolve => setTimeout(resolve, 100));
             if (all_submissions !== undefined) {
                 break;
             }
