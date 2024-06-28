@@ -131,6 +131,15 @@ const EditSubmission = () => {
               )}
 
             </div>
+            <p>Error:</p>
+            <div className="mt-2">
+              {submission.error && (  // Conditionally render code content
+                <pre className="bg-gray-100 p-2 rounded-md overflow-auto max-h-64">
+                  {submission.error}
+                </pre>
+              )}
+
+            </div>
           </div>
 
           {/* Input data section  */}
