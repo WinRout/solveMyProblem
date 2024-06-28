@@ -46,7 +46,7 @@ Join the frontend from `http://localhost:3000`
 Join the admin panel from `http://localhost:3001`
 
 ## Notes
-This application uses multiple solver services for parallel executions. You can set the number of solvers in the `.env` file of root directory. By default, solvers are 3. Also, note that each solver has a maximum execution time of 300 seconds. If this time is exceeded, solver stops.
+This application uses multiple solver services for parallel executions. You can set the number of solvers in the `.env` file of root directory as well as the execution runtime timeout in seconds. By default, solvers are 3 and execution timeouts are 300 seconds. If this time is exceeded, solver stops.
 
 ## Example Inputs
 In `test_solver` directory a .py code and some .json input_data can be found. Use them as example of inputs. Note that the code of the submission must: 
