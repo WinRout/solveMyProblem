@@ -2,144 +2,35 @@
 <jmeterTestPlan version="1.2" properties="5.0" jmeter="5.6.3">
   <hashTree>
     <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="SolveMyProblem - Submissions Stress Test">
+      <boolProp name="TestPlan.serialize_threadgroups">true</boolProp>
       <elementProp name="TestPlan.user_defined_variables" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
         <collectionProp name="Arguments.arguments"/>
       </elementProp>
     </TestPlan>
     <hashTree>
-      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Create Submissions" enabled="false">
-        <intProp name="ThreadGroup.num_threads">1000</intProp>
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Create - Execute Submissions">
+        <intProp name="ThreadGroup.num_threads">5</intProp>
         <intProp name="ThreadGroup.ramp_time">1</intProp>
         <boolProp name="ThreadGroup.same_user_on_next_iteration">false</boolProp>
         <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
         <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller">
-          <stringProp name="LoopController.loops">1</stringProp>
+          <stringProp name="LoopController.loops">100</stringProp>
           <boolProp name="LoopController.continue_forever">false</boolProp>
         </elementProp>
       </ThreadGroup>
       <hashTree>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="HTTP Request">
-          <stringProp name="HTTPSampler.domain">localhost</stringProp>
-          <stringProp name="HTTPSampler.port">4011</stringProp>
-          <stringProp name="HTTPSampler.protocol">HTTP</stringProp>
-          <stringProp name="HTTPSampler.path">/submission-create</stringProp>
-          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
-          <stringProp name="HTTPSampler.method">POST</stringProp>
-          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
-          <boolProp name="HTTPSampler.DO_MULTIPART_POST">true</boolProp>
-          <elementProp name="HTTPsampler.Files" elementType="HTTPFileArgs">
-            <collectionProp name="HTTPFileArgs.files">
-              <elementProp name="/home/winrout/lab/saas2024-15/test_solver/locations_20.json" elementType="HTTPFileArg">
-                <stringProp name="File.mimetype">application/json</stringProp>
-                <stringProp name="File.path">/home/winrout/lab/saas2024-15/test_solver/locations_20.json</stringProp>
-                <stringProp name="File.paramname">jsonFile</stringProp>
-              </elementProp>
-              <elementProp name="/home/winrout/lab/saas2024-15/test_solver/vrpSolver.py" elementType="HTTPFileArg">
-                <stringProp name="File.mimetype">text/x-python</stringProp>
-                <stringProp name="File.path">/home/winrout/lab/saas2024-15/test_solver/vrpSolver.py</stringProp>
-                <stringProp name="File.paramname">pyFile</stringProp>
-              </elementProp>
-            </collectionProp>
-          </elementProp>
-          <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
-          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
-            <collectionProp name="Arguments.arguments">
-              <elementProp name="metadata" elementType="HTTPArgument">
-                <boolProp name="HTTPArgument.always_encode">false</boolProp>
-                <stringProp name="Argument.value">{&quot;email&quot;:&quot;nikitsin2000@gmail.com&quot;,&quot;submission_name&quot;:&quot;${submission_name}&quot;}</stringProp>
-                <stringProp name="Argument.metadata">=</stringProp>
-                <boolProp name="HTTPArgument.use_equals">true</boolProp>
-                <stringProp name="Argument.name">metadata</stringProp>
-              </elementProp>
-            </collectionProp>
-          </elementProp>
-        </HTTPSamplerProxy>
-        <hashTree>
-          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager">
-            <collectionProp name="HeaderManager.headers">
-              <elementProp name="" elementType="Header">
-                <stringProp name="Header.name">Content-Type</stringProp>
-                <stringProp name="Header.value">multipart/form-data; boundary=----JMeterBoundary</stringProp>
-              </elementProp>
-            </collectionProp>
-          </HeaderManager>
-          <hashTree/>
-        </hashTree>
-        <CounterConfig guiclass="CounterConfigGui" testclass="CounterConfig" testname="Counter">
-          <stringProp name="CounterConfig.start">1</stringProp>
-          <stringProp name="CounterConfig.end"></stringProp>
-          <stringProp name="CounterConfig.incr">1</stringProp>
-          <stringProp name="CounterConfig.name">loopCounter</stringProp>
-          <stringProp name="CounterConfig.format"></stringProp>
-          <boolProp name="CounterConfig.per_user">false</boolProp>
-        </CounterConfig>
+        <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="CSV Data Set Config">
+          <stringProp name="delimiter">,</stringProp>
+          <stringProp name="fileEncoding">UTF-8</stringProp>
+          <stringProp name="filename">/home/winrout/lab/saas2024-15/test_solver/emails.csv</stringProp>
+          <boolProp name="ignoreFirstLine">false</boolProp>
+          <boolProp name="quotedData">false</boolProp>
+          <boolProp name="recycle">true</boolProp>
+          <stringProp name="shareMode">shareMode.all</stringProp>
+          <boolProp name="stopThread">false</boolProp>
+          <stringProp name="variableNames">email</stringProp>
+        </CSVDataSet>
         <hashTree/>
-        <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="JSR223 PreProcessor">
-          <stringProp name="cacheKey">true</stringProp>
-          <stringProp name="filename"></stringProp>
-          <stringProp name="parameters"></stringProp>
-          <stringProp name="script">// Get the current thread number
-int threadNum = ctx.getThreadNum() + 1; // JMeter thread numbers are zero-based, add 1 to make it human-readable
-
-// Get the current loop iteration
-int loopCounter = Integer.parseInt(vars.get(&quot;loopCounter&quot;));
-
-// Set the dynamic submission name
-String submissionName = &quot;submission_&quot; + loopCounter;
-vars.put(&quot;submission_name&quot;, submissionName);
-</stringProp>
-          <stringProp name="scriptLanguage">groovy</stringProp>
-        </JSR223PreProcessor>
-        <hashTree/>
-        <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree">
-          <boolProp name="ResultCollector.error_logging">false</boolProp>
-          <objProp>
-            <name>saveConfig</name>
-            <value class="SampleSaveConfiguration">
-              <time>true</time>
-              <latency>true</latency>
-              <timestamp>true</timestamp>
-              <success>true</success>
-              <label>true</label>
-              <code>true</code>
-              <message>true</message>
-              <threadName>true</threadName>
-              <dataType>true</dataType>
-              <encoding>false</encoding>
-              <assertions>true</assertions>
-              <subresults>true</subresults>
-              <responseData>false</responseData>
-              <samplerData>false</samplerData>
-              <xml>false</xml>
-              <fieldNames>true</fieldNames>
-              <responseHeaders>false</responseHeaders>
-              <requestHeaders>false</requestHeaders>
-              <responseDataOnError>false</responseDataOnError>
-              <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
-              <assertionsResultsToSave>0</assertionsResultsToSave>
-              <bytes>true</bytes>
-              <sentBytes>true</sentBytes>
-              <url>true</url>
-              <threadCounts>true</threadCounts>
-              <idleTime>true</idleTime>
-              <connectTime>true</connectTime>
-            </value>
-          </objProp>
-          <stringProp name="filename"></stringProp>
-        </ResultCollector>
-        <hashTree/>
-      </hashTree>
-      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Execute Submissions">
-        <intProp name="ThreadGroup.num_threads">1000</intProp>
-        <intProp name="ThreadGroup.ramp_time">1</intProp>
-        <boolProp name="ThreadGroup.same_user_on_next_iteration">false</boolProp>
-        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
-        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller">
-          <stringProp name="LoopController.loops">1</stringProp>
-          <boolProp name="LoopController.continue_forever">false</boolProp>
-        </elementProp>
-      </ThreadGroup>
-      <hashTree>
         <com.di.jmeter.kafka.config.KafkaProducerConfig guiclass="TestBeanGUI" testclass="com.di.jmeter.kafka.config.KafkaProducerConfig" testname="Kafka Producer Config">
           <stringProp name="batchSize">16384</stringProp>
           <stringProp name="clientId">JMeter-Producer-1</stringProp>
@@ -178,20 +69,90 @@ int loopCounter = Integer.parseInt(vars.get(&quot;loopCounter&quot;));
 // Set the dynamic submission name
 String submissionName = &quot;submission_&quot; + loopCounter;
 vars.put(&quot;submission_name&quot;, submissionName);
+
+// Generate a random index based on the number of rows in the CSV file
+int randomIndex = new Random().nextInt(vars.getObject(&quot;email&quot;).length);
+
+// Fetch the email and file location based on the random index
+String randomEmail = vars.getObject(&quot;email&quot;)[randomIndex];
+// String randomFileLocation = vars.getObject(&quot;file_location&quot;)[randomIndex];
+
+// Store the random email and file location in JMeter variables
+vars.put(&quot;randomEmail&quot;, randomEmail);
+// vars.put(&quot;randomFileLocation&quot;, randomFileLocation);
 </stringProp>
           <stringProp name="scriptLanguage">groovy</stringProp>
         </JSR223PreProcessor>
         <hashTree/>
-        <com.di.jmeter.kafka.sampler.KafkaProducerSampler guiclass="TestBeanGUI" testclass="com.di.jmeter.kafka.sampler.KafkaProducerSampler" testname="Kafka Producer Sampler">
-          <stringProp name="kafkaMessage">${submission_name}</stringProp>
-          <stringProp name="kafkaMessageKey">nikitsin2000@gmail.com</stringProp>
-          <stringProp name="kafkaProducerClientVariableName">KafkaProducerClient</stringProp>
-          <stringProp name="kafkaTopic">execution-request-accepted</stringProp>
-          <collectionProp name="messageHeaders"/>
-          <stringProp name="partitionString"></stringProp>
-        </com.di.jmeter.kafka.sampler.KafkaProducerSampler>
-        <hashTree/>
-        <ResultCollector guiclass="SummaryReport" testclass="ResultCollector" testname="Summary Report">
+        <RandomController guiclass="RandomControlGui" testclass="RandomController" testname="Random Controller">
+          <intProp name="InterleaveControl.style">1</intProp>
+        </RandomController>
+        <hashTree>
+          <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Simple Controller"/>
+          <hashTree>
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="HTTP Request">
+              <stringProp name="HTTPSampler.domain">localhost</stringProp>
+              <stringProp name="HTTPSampler.port">4011</stringProp>
+              <stringProp name="HTTPSampler.protocol">HTTP</stringProp>
+              <stringProp name="HTTPSampler.path">/submission-create</stringProp>
+              <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+              <stringProp name="HTTPSampler.method">POST</stringProp>
+              <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+              <boolProp name="HTTPSampler.DO_MULTIPART_POST">true</boolProp>
+              <elementProp name="HTTPsampler.Files" elementType="HTTPFileArgs">
+                <collectionProp name="HTTPFileArgs.files">
+                  <elementProp name="/home/winrout/lab/saas2024-15/test_solver/locations_20.json" elementType="HTTPFileArg">
+                    <stringProp name="File.mimetype">application/json</stringProp>
+                    <stringProp name="File.path">/home/winrout/lab/saas2024-15/test_solver/locations_20.json</stringProp>
+                    <stringProp name="File.paramname">jsonFile</stringProp>
+                  </elementProp>
+                  <elementProp name="/home/winrout/lab/saas2024-15/test_solver/vrpSolver.py" elementType="HTTPFileArg">
+                    <stringProp name="File.mimetype">text/x-python</stringProp>
+                    <stringProp name="File.path">/home/winrout/lab/saas2024-15/test_solver/vrpSolver.py</stringProp>
+                    <stringProp name="File.paramname">pyFile</stringProp>
+                  </elementProp>
+                </collectionProp>
+              </elementProp>
+              <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+                <collectionProp name="Arguments.arguments">
+                  <elementProp name="metadata" elementType="HTTPArgument">
+                    <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                    <stringProp name="Argument.value">{&quot;email&quot;:&quot;${email}&quot;,&quot;submission_name&quot;:&quot;${submission_name}&quot;}</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                    <boolProp name="HTTPArgument.use_equals">true</boolProp>
+                    <stringProp name="Argument.name">metadata</stringProp>
+                  </elementProp>
+                </collectionProp>
+              </elementProp>
+            </HTTPSamplerProxy>
+            <hashTree>
+              <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager">
+                <collectionProp name="HeaderManager.headers">
+                  <elementProp name="" elementType="Header">
+                    <stringProp name="Header.name">Content-Type</stringProp>
+                    <stringProp name="Header.value">multipart/form-data; boundary=----JMeterBoundary</stringProp>
+                  </elementProp>
+                </collectionProp>
+              </HeaderManager>
+              <hashTree/>
+            </hashTree>
+            <ConstantTimer guiclass="ConstantTimerGui" testclass="ConstantTimer" testname="Constant Timer">
+              <stringProp name="ConstantTimer.delay">1000</stringProp>
+            </ConstantTimer>
+            <hashTree/>
+            <com.di.jmeter.kafka.sampler.KafkaProducerSampler guiclass="TestBeanGUI" testclass="com.di.jmeter.kafka.sampler.KafkaProducerSampler" testname="Kafka Producer Sampler">
+              <stringProp name="kafkaMessage">${submission_name}</stringProp>
+              <stringProp name="kafkaMessageKey">${email}</stringProp>
+              <stringProp name="kafkaProducerClientVariableName">KafkaProducerClient</stringProp>
+              <stringProp name="kafkaTopic">execution-request-accepted</stringProp>
+              <collectionProp name="messageHeaders"/>
+              <stringProp name="partitionString"></stringProp>
+            </com.di.jmeter.kafka.sampler.KafkaProducerSampler>
+            <hashTree/>
+          </hashTree>
+        </hashTree>
+        <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree">
           <boolProp name="ResultCollector.error_logging">false</boolProp>
           <objProp>
             <name>saveConfig</name>
@@ -227,92 +188,6 @@ vars.put(&quot;submission_name&quot;, submissionName);
           </objProp>
           <stringProp name="filename"></stringProp>
         </ResultCollector>
-        <hashTree/>
-      </hashTree>
-      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Thread Group">
-        <intProp name="ThreadGroup.num_threads">1</intProp>
-        <intProp name="ThreadGroup.ramp_time">0</intProp>
-        <longProp name="ThreadGroup.duration">100</longProp>
-        <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
-        <boolProp name="ThreadGroup.scheduler">true</boolProp>
-        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
-        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller">
-          <stringProp name="LoopController.loops">1</stringProp>
-          <boolProp name="LoopController.continue_forever">false</boolProp>
-        </elementProp>
-      </ThreadGroup>
-      <hashTree>
-        <com.di.jmeter.kafka.config.KafkaConsumerConfig guiclass="TestBeanGUI" testclass="com.di.jmeter.kafka.config.KafkaConsumerConfig" testname="Kafka Consumer Config 3">
-          <stringProp name="kafkaConsumerClientVariableName">KafkaConsumerClient3</stringProp>
-          <stringProp name="kafkaBrokers">localhost:29092</stringProp>
-          <stringProp name="groupId">consumer-group-1-jmeter</stringProp>
-          <stringProp name="topic">solvers-general-response</stringProp>
-          <stringProp name="deSerializerKey">org.apache.kafka.common.serialization.StringDeserializer</stringProp>
-          <stringProp name="deSerializerValue">org.apache.kafka.common.serialization.StringDeserializer</stringProp>
-          <stringProp name="numberOfMsgToPoll">1</stringProp>
-          <boolProp name="autoCommit">true</boolProp>
-          <stringProp name="securityType">securityType.plaintext</stringProp>
-          <stringProp name="kafkaSslTruststore"></stringProp>
-          <stringProp name="kafkaSslTruststorePassword">Chang3M3</stringProp>
-          <stringProp name="kafkaSslKeystore"></stringProp>
-          <stringProp name="kafkaSslKeystorePassword">Chang3M3</stringProp>
-          <stringProp name="kafkaSslPrivateKeyPass">Chang3M3</stringProp>
-          <collectionProp name="extraConfigs"/>
-        </com.di.jmeter.kafka.config.KafkaConsumerConfig>
-        <hashTree/>
-        <com.di.jmeter.kafka.config.KafkaConsumerConfig guiclass="TestBeanGUI" testclass="com.di.jmeter.kafka.config.KafkaConsumerConfig" testname="Kafka Consumer Config 2">
-          <stringProp name="kafkaConsumerClientVariableName">KafkaConsumerClient2</stringProp>
-          <stringProp name="kafkaBrokers">localhost:29092</stringProp>
-          <stringProp name="groupId">consumer-group-1-jmeter</stringProp>
-          <stringProp name="topic">solver-execution-start</stringProp>
-          <stringProp name="deSerializerKey">org.apache.kafka.common.serialization.StringDeserializer</stringProp>
-          <stringProp name="deSerializerValue">org.apache.kafka.common.serialization.StringDeserializer</stringProp>
-          <stringProp name="numberOfMsgToPoll">1</stringProp>
-          <boolProp name="autoCommit">true</boolProp>
-          <stringProp name="securityType">securityType.plaintext</stringProp>
-          <stringProp name="kafkaSslTruststore"></stringProp>
-          <stringProp name="kafkaSslTruststorePassword">Chang3M3</stringProp>
-          <stringProp name="kafkaSslKeystore"></stringProp>
-          <stringProp name="kafkaSslKeystorePassword">Chang3M3</stringProp>
-          <stringProp name="kafkaSslPrivateKeyPass">Chang3M3</stringProp>
-          <collectionProp name="extraConfigs"/>
-        </com.di.jmeter.kafka.config.KafkaConsumerConfig>
-        <hashTree/>
-        <com.di.jmeter.kafka.config.KafkaConsumerConfig guiclass="TestBeanGUI" testclass="com.di.jmeter.kafka.config.KafkaConsumerConfig" testname="Kafka Consumer Config 1">
-          <stringProp name="kafkaConsumerClientVariableName">KafkaConsumerClient1</stringProp>
-          <stringProp name="kafkaBrokers">localhost:29092</stringProp>
-          <stringProp name="groupId">consumer-group-1-jmeter</stringProp>
-          <stringProp name="topic">execution-request-accepted</stringProp>
-          <stringProp name="deSerializerKey">org.apache.kafka.common.serialization.StringDeserializer</stringProp>
-          <stringProp name="deSerializerValue">org.apache.kafka.common.serialization.StringDeserializer</stringProp>
-          <stringProp name="numberOfMsgToPoll">1</stringProp>
-          <boolProp name="autoCommit">true</boolProp>
-          <stringProp name="securityType">securityType.plaintext</stringProp>
-          <stringProp name="kafkaSslTruststore"></stringProp>
-          <stringProp name="kafkaSslTruststorePassword">Chang3M3</stringProp>
-          <stringProp name="kafkaSslKeystore"></stringProp>
-          <stringProp name="kafkaSslKeystorePassword">Chang3M3</stringProp>
-          <stringProp name="kafkaSslPrivateKeyPass">Chang3M3</stringProp>
-          <collectionProp name="extraConfigs"/>
-        </com.di.jmeter.kafka.config.KafkaConsumerConfig>
-        <hashTree/>
-        <com.di.jmeter.kafka.sampler.KafkaConsumerSampler guiclass="TestBeanGUI" testclass="com.di.jmeter.kafka.sampler.KafkaConsumerSampler" testname="Kafka Consumer Sampler1" enabled="true">
-          <stringProp name="kafkaConsumerClientVariableName">KafkaConsumerClient1</stringProp>
-          <stringProp name="pollTimeout">10000</stringProp>
-          <stringProp name="commitType">Sync</stringProp>
-        </com.di.jmeter.kafka.sampler.KafkaConsumerSampler>
-        <hashTree/>
-        <com.di.jmeter.kafka.sampler.KafkaConsumerSampler guiclass="TestBeanGUI" testclass="com.di.jmeter.kafka.sampler.KafkaConsumerSampler" testname="Kafka Consumer Sampler2">
-          <stringProp name="kafkaConsumerClientVariableName">KafkaConsumerClient2</stringProp>
-          <stringProp name="pollTimeout">10000</stringProp>
-          <stringProp name="commitType">Sync</stringProp>
-        </com.di.jmeter.kafka.sampler.KafkaConsumerSampler>
-        <hashTree/>
-        <com.di.jmeter.kafka.sampler.KafkaConsumerSampler guiclass="TestBeanGUI" testclass="com.di.jmeter.kafka.sampler.KafkaConsumerSampler" testname="Kafka Consumer Sampler3">
-          <stringProp name="kafkaConsumerClientVariableName">KafkaConsumerClient3</stringProp>
-          <stringProp name="pollTimeout">10000</stringProp>
-          <stringProp name="commitType">Sync</stringProp>
-        </com.di.jmeter.kafka.sampler.KafkaConsumerSampler>
         <hashTree/>
         <ResultCollector guiclass="SummaryReport" testclass="ResultCollector" testname="Summary Report">
           <boolProp name="ResultCollector.error_logging">false</boolProp>

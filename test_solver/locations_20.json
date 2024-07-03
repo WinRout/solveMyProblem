@@ -1,4 +1,7 @@
 {
+  "num_vehicles":4,
+  "depot":0,
+  "max_distance":12000,
   "Locations": [
     {
       "Latitude": 37.99983328183838,
@@ -80,8 +83,5 @@
       "Latitude": 37.97827880279073,
       "Longitude": 23.75884558944574
     }
-  ],
-  "num_vehicles":10,
-  "depot":13,
-  "max_distance":20000
+  ]
 }
